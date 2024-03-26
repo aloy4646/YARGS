@@ -59,25 +59,32 @@ function simpanContact(nama, nomorHandphone, email){
     const file = fs.readFileSync(dataPath, 'utf-8')
     const contacts = JSON.parse(file)
 
+    var isValid = true
+
     //pengecekan nama duplikat
     if(contacts.find(contact => contact.nama === nama)){
-        console.log("Nama sudah ada, contact gagal ditambahkan")
-        return
+        console.log("- Nama sudah ada, tidak dapat digunakan")
+        isValid = false
     }
 
     //pengecekan format email
-    if(!validator.isEmail(email)){
-        console.log("Format email tidak sesuai, contact gagal ditambahkan")
-        return
+    //pengecekan contact.email dipakai untuk memeriksa apakah email undefined atau tidak
+    //jika contact.email undefined maka tidak dapat dipakai oleh validator
+    if(contact.email && !validator.isEmail(contact.email)){
+        console.log("- Format email tidak sesuai")
+        isValid = false
     }
 
     //pengecekan format nomor handphone
-    if(!validator.isMobilePhone(nomorHandphone, "id-ID")){
-        console.log("Format nomor handphone tidak sesuai, contact gagal ditambahkan")
-        return
+    if(!validator.isMobilePhone(contact.nomorHandphone, "id-ID")){
+        console.log("- Format nomor handphone tidak sesuai")
+        isValid = false
     }
 
-    contacts.push(contact)
-    fs.writeFileSync(dataPath, JSON.stringify(contacts))
-    console.log("Data anda sudah disimpan, terima kasih telah memberikan data!");
+    if(isValid){
+        contacts.push(contact)
+        fs.writeFileSync(dataPath, JSON.stringify(contacts))
+        console.log("Data anda sudah disimpan, terima kasih telah memberikan data!");
+    }else console.log("Data gagal disimpan, silahkah coba lagi")
+   
 }
